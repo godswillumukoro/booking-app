@@ -21,12 +21,24 @@ const dbConnect = async function () {
 }
 
 // middlewares
+app.use(express.json())
+
 app.use('/api/v1/auth', authRoute)
 app.use('/api/v1/hotels', hotelsRoute)
 app.use('/api/v1/rooms', roomsRoute)
 app.use('/api/v1/users', usersRoute)
 
+// error handler middleware
+app.use((err, req, res, next) => {
+    console.error(err.stack)
+    res.status(500).json({
+        status: err.status,
+        message: err.message,
+        stack: err.stack
+    })
+})
+
 app.listen(process.env.PORT, () => {
-    // dbConnect()
+    dbConnect()
     console.log("API running successfully.")
 })
