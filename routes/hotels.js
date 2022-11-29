@@ -1,64 +1,22 @@
 import express from 'express'
-import Hotel from '../models/Hotel.js'
-import { createError } from '../utils/error.js'
+import { createHotel, deleteHotel, readAllHotels, readOneHotel, updateHotel } from '../controllers/hotelController.js'
+// import { createError } from '../utils/error.js'
 
 const router = express.Router()
 
 // Create
-router.post('/', async (req, res) => {
-    const newHotel = new Hotel(req.body)
-    try {
-        const savedHotel = await newHotel.save()
-        res.status(200).json(savedHotel)
-    }
-    catch (err) {
-        res.status(500).json(err)
-    }
-})
+router.post('/', createHotel)
+
 // Read One
-router.get('/:id', async (req, res, next) => {
-    try {
-        const getHotel = await Hotel.findById(req.params.id)
-        res.status(200).json(getHotel)
-    }
-    catch (err) {
-        next(createError(401, 'You are not an authenticated user'))
-        res.status(500).json(err)
-    }
-})
+router.get('/:id', readOneHotel)
 
 // Read All
-router.get('/', async (req, res, next) => {
-    try {
-        const getHotels = await Hotel.find()
-        res.status(200).json(getHotels)
-    }
-    catch (err) {
-        next(err)
-        res.status(500).json(err)
-    }
-})
+router.get('/', readAllHotels)
 
 // Update
-router.put('/:id', async (req, res) => {
-    try {
-        const updatedHotel = await Hotel.findByIdAndUpdate(req.params.id, req.body, { new: true })
-        res.status(200).json(updatedHotel)
-    }
-    catch (err) {
-        res.status(500).json(err)
-    }
-})
+router.put('/:id', updateHotel)
 
 // Delete
-router.delete('/:id', async (req, res) => {
-    try {
-        await Hotel.findByIdAndDelete(req.params.id)
-        res.status(200).json('Deleted')
-    }
-    catch (err) {
-        res.status(500).json(err)
-    }
-})
+router.delete('/:id', deleteHotel)
 
 export default router
